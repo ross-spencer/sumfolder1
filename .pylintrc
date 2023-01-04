@@ -1,0 +1,43 @@
+[MAIN]
+extension-pkg-whitelist=
+    pydantic, # binary module validation, Pydantic/Pylint recommendation.
+
+ignore=
+	LICENSE,
+	.pylintrc,
+
+ignore-patterns=
+	^(.+).ini$,
+	.gitignore,
+	.pre-commit-config.yaml,
+	^(.+).md$,
+	^(.+).sh$,
+    ^(.+).csv$,
+    ^(.+).png$,
+    ^(.+).toml$,
+    ^(.+).txt$,
+	^(.+).service$,
+
+ignore-paths=
+	requirements/*,
+	.github/,
+	tests/fixtures/vcrpy/*,
+    reference/*,
+    .vscode/settings.json,
+    setup.py,
+    Makefile,
+    TODO,
+
+[MESSAGES CONTROL]
+
+disable =
+	C0301, 	# line-length too long, see Black documented recommendations.
+    R0902,  # Too many instance attributes.
+    R0914,  # Too many local variables.
+    R0912,  # Too many branches (15/12) (too-many-branches). TODO: Immediate priority.
+    R0915,  # Too many statements (71/50) (too-many-statements). TODO: Immediate priority.
+    R0903,  # Too few public methods (1/2) (too-few-public-methods).
+    R0801,  # Similar lines in multiple files. We're seeing this in the unit tests.
+
+
+
