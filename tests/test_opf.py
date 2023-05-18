@@ -3748,31 +3748,33 @@ def test_opf_corpus(tmp_path, droid_report):
     folder_sum = SumFolders()
     folder_sum.sum_folders(str(droid_csv))
 
-    root_hash = "3fde29d93826ac9761e0cd27dbf26d3e"
+    root_hash = "4e7473e06cd0a9eecf2c5c98069368cc"
     assert folder_sum.folders[0].hash_ == root_hash
 
     calculated_with = [
-        "68c2d3c2dfabee3a6119565e7c334e77",
-        "eb0b1c0fa2194622f91e8e22ea70674f",
-        "e196d9fbc8faf9a830d36848fde87c6d",
-        "d059deb7e0a38da8de28005238671805",
-        "ee39bfd8265b076f42c24fe003ba821a",
-        "8a2f32efcf93745d9e53a0207e86658a",
-        "8de7713d4c8094b47d6597eea5156c12",
-        "8eae4f707f7e8f6e97c743d862b625cf",
-        "d3efe9c47db35eb25a9ed7c62f64a750",
-        "265e5f731d768a2817a8147c74c2f077",
-        "fe9af9517bbbc74f84aa224bf74b7118",
-        "569eb1f39db2295386e1acffb6fd550a",
-        "8c67dbaf0ba22f2e7fbc26413b86051b",
-        "3d6524f4a6ecb33a27fab4dadd850800",
-        "419af5e9954539e760d0cce375678c19",
-        "77f19e2a8afdc425ae388f0ce8a3dcac",
-        "03c513c9f9993120af44f45cf39d6773",
-        "75003d23540c8b0d0ba080eaf0da08de",
-        "05de871fb237ca3deb398f7fff28c934",
+        # Folders.
+        "bda385b6e412f3295908f1b5f63c7648",
         "302c2526d70aa34f702814525d33ee01",
-        "4a6cc4a941677f325587afe6c7e994f9",
+        "10a729adf7acb46117b414c96851b146",
+        "75003d23540c8b0d0ba080eaf0da08de",
+        "cb210962cbded255da1ccbdf1056ee34",
+        "77f19e2a8afdc425ae388f0ce8a3dcac",
+        "e4bc1f76a7b90177e94174af322ad151",
+        "3d6524f4a6ecb33a27fab4dadd850800",
+        "8c67dbaf0ba22f2e7fbc26413b86051b",
+        "569eb1f39db2295386e1acffb6fd550a",
+        "57a156a4bc725ede524766c57b098614",
+        "4fa82e85ca61f02fb17cb19698c69851",
+        "9b807479309a42e33569b0333934470c",
+        "ccf37f3ef352a1b0d461daa7c5a32322",
+        "8de7713d4c8094b47d6597eea5156c12",
+        "8a2f32efcf93745d9e53a0207e86658a",
+        "ee39bfd8265b076f42c24fe003ba821a",
+        "d059deb7e0a38da8de28005238671805",
+        "342cc8c9cd50bd63e6d8b697b8a2b546",
+        "53865bd67e9e16c39b53fae33e0b2cf7",
+        "68c2d3c2dfabee3a6119565e7c334e77",
+        # Files.
         "5c5056419fd7d60bd43ec4f803248c47",
         "5dd62e43d58f6a236d7fe4ecc4899fb0",
         "94c85329a7c0a7b50da18f4944a1d1dd",
@@ -3782,6 +3784,9 @@ def test_opf_corpus(tmp_path, droid_report):
         "f07d1d989c6ec7da5f0bb0a578eca20c",
     ]
 
+    # The loops below help us to monitor for change in the algorithm in
+    # one batch process. If a checksum doesn't add up correctly, instead
+    # of 28 items in a list we will end up with a smaller list.
     res = []
     for folder in folder_sum.folders:
         if folder.hash_ in calculated_with:
@@ -3879,3 +3884,44 @@ def test_opf_corpus(tmp_path, droid_report):
         hash_5.update(hash_.encode())
     assert hash_5.hexdigest() == "302c2526d70aa34f702814525d33ee01"
     assert hash_5.hexdigest() in calculated_with
+
+    """ # pylint: disable=W0105
+   📁 .git bda385b6e412f3295908f1b5f63c7648
+      📁 branches 1ccb49edc4e873f1a8affd4bad5e9b90
+      📁 hooks 97916ce43e362260098811935db059df
+      📁 info a57b296f86e9efeb8bf811977cb1f1f2
+      📁 logs 18912ca7a48b8d288185c4d7f79af7b1
+      📁 objects 47dcb0d61974630ff3f2a3bfa38dd18b
+      📁 refs aee6e22402af0ef7e65c6bb91b6715ae
+      📄 index 0b1d1a853b1469ef8d9c90a32943b0b5
+      📄 ORIG_HEAD 1115e8b61af4ee1659d3166e16b8c75c
+      📄 FETCH_HEAD 469577887a6877cce15e57878507455a
+      📄 HEAD 4cf2d64e44205fe628ddd534e1151b58
+      📄 description a0a7c3fff21f2aea3cfa1d0316dd816c
+      📄 config bdb85403760ea51b617c2826561eabb0
+      📄 packed-refs ee2e3150e87d5b84a568090c45bcfced
+    """
+
+    # A folder from the set with directories and files.
+    hash_6 = hashlib.md5()
+    hashes_x = [
+        # Folders.
+        "18912ca7a48b8d288185c4d7f79af7b1",
+        "1ccb49edc4e873f1a8affd4bad5e9b90",
+        "47dcb0d61974630ff3f2a3bfa38dd18b",
+        "97916ce43e362260098811935db059df",
+        "a57b296f86e9efeb8bf811977cb1f1f2",
+        "aee6e22402af0ef7e65c6bb91b6715ae",
+        # Files.
+        "0b1d1a853b1469ef8d9c90a32943b0b5",
+        "1115e8b61af4ee1659d3166e16b8c75c",
+        "469577887a6877cce15e57878507455a",
+        "4cf2d64e44205fe628ddd534e1151b58",
+        "a0a7c3fff21f2aea3cfa1d0316dd816c",
+        "bdb85403760ea51b617c2826561eabb0",
+        "ee2e3150e87d5b84a568090c45bcfced",
+    ]
+    for hash_ in hashes_x:
+        hash_6.update(hash_.encode())
+    assert hash_6.hexdigest() == "bda385b6e412f3295908f1b5f63c7648"
+    assert hash_6.hexdigest() in calculated_with

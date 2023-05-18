@@ -120,37 +120,35 @@ def test_existing_root_node(tmp_path, droid_report, is_windows):
 
     folders_results = []
     for folder in folder_sum.folders:
-        folders_results.append(
-            f"{folder.path.name} {folder.hash_} {folder.depth} {folder.sort_order}"
-        )
+        folders_results.append(f"{folder.path.name} {folder.hash_} {folder.depth}")
 
     # Sort order should be consistent and so list ordering should be
     # predictable.
     if is_windows:
         expected_folders = [
-            "archive 38f27e0641507c124daabe21c08dc4a1 6 0",
-            "sub_dir_1 b40a1fc415f761feeeae17d186e9f646 7 2",
-            "sub_1_dir_1 ec01eb83265578c6a1ce893964bd64c7 8 5",
-            "sub_dir_2 1ccb49edc4e873f1a8affd4bad5e9b90 7 7",
-            "sub_dir_3 2a60541cede91a36e9dc5bab7a97dd6e 7 8",
-            "sub_3_empty_1 db9d848b4f83ff3cb3faa4df0a59e3e1 8 9",
-            "sub_3_empty_2 1ccb49edc4e873f1a8affd4bad5e9b90 9 10",
-            "sub_dir_4 e89d20857f3219ad04fa0d9e9c7d266e 7 11",
-            "sub_dir_5 a8c13363f1380fd1f29a676d2a73b9af 7 15",
-            "sub_5_dir_1 86d324196afb0f709cf5ff59c1b373de 8 16",
+            "archive f89f03d1da9d97e1083cef76d1c658d7 6",
+            "sub_dir_1 b40a1fc415f761feeeae17d186e9f646 7",
+            "sub_1_dir_1 ec01eb83265578c6a1ce893964bd64c7 8",
+            "sub_dir_2 1ccb49edc4e873f1a8affd4bad5e9b90 7",
+            "sub_dir_3 2a60541cede91a36e9dc5bab7a97dd6e 7",
+            "sub_3_empty_1 db9d848b4f83ff3cb3faa4df0a59e3e1 8",
+            "sub_3_empty_2 1ccb49edc4e873f1a8affd4bad5e9b90 9",
+            "sub_dir_4 e89d20857f3219ad04fa0d9e9c7d266e 7",
+            "sub_dir_5 a8c13363f1380fd1f29a676d2a73b9af 7",
+            "sub_5_dir_1 86d324196afb0f709cf5ff59c1b373de 8",
         ]
     if not is_windows:
         expected_folders = [
-            "archive 38f27e0641507c124daabe21c08dc4a1 2 0",
-            "sub_dir_1 b40a1fc415f761feeeae17d186e9f646 3 2",
-            "sub_1_dir_1 ec01eb83265578c6a1ce893964bd64c7 4 5",
-            "sub_dir_2 1ccb49edc4e873f1a8affd4bad5e9b90 3 7",
-            "sub_dir_3 2a60541cede91a36e9dc5bab7a97dd6e 3 8",
-            "sub_3_empty_1 db9d848b4f83ff3cb3faa4df0a59e3e1 4 9",
-            "sub_3_empty_2 1ccb49edc4e873f1a8affd4bad5e9b90 5 10",
-            "sub_dir_4 e89d20857f3219ad04fa0d9e9c7d266e 3 11",
-            "sub_dir_5 a8c13363f1380fd1f29a676d2a73b9af 3 15",
-            "sub_5_dir_1 86d324196afb0f709cf5ff59c1b373de 4 16",
+            "archive f89f03d1da9d97e1083cef76d1c658d7 2",
+            "sub_dir_1 b40a1fc415f761feeeae17d186e9f646 3",
+            "sub_1_dir_1 ec01eb83265578c6a1ce893964bd64c7 4",
+            "sub_dir_2 1ccb49edc4e873f1a8affd4bad5e9b90 3",
+            "sub_dir_3 2a60541cede91a36e9dc5bab7a97dd6e 3",
+            "sub_3_empty_1 db9d848b4f83ff3cb3faa4df0a59e3e1 4",
+            "sub_3_empty_2 1ccb49edc4e873f1a8affd4bad5e9b90 5",
+            "sub_dir_4 e89d20857f3219ad04fa0d9e9c7d266e 3",
+            "sub_dir_5 a8c13363f1380fd1f29a676d2a73b9af 3",
+            "sub_5_dir_1 86d324196afb0f709cf5ff59c1b373de 4",
         ]
 
     assert folders_results == expected_folders
@@ -172,7 +170,7 @@ def test_existing_root_node(tmp_path, droid_report, is_windows):
     ]
 
     assert files_results == expected_files
-    assert folder_sum.root_folder_hash == "38f27e0641507c124daabe21c08dc4a1"
+    assert folder_sum.root_folder_hash == "f89f03d1da9d97e1083cef76d1c658d7"
 
 
 @pytest.mark.parametrize(
@@ -206,17 +204,16 @@ def test_artificial_root_node(tmp_path, droid_report, is_windows):
 
     # The hash for our original set still exists, just at a lower
     # level [1]. Now we have another root hash we can refer to [0].
-    assert folder_sum.folders[0].hash_ == "0b246bb9e78ea53ab83ea448f02718d1"
-    assert folder_sum.folders[1].hash_ == "38f27e0641507c124daabe21c08dc4a1"
+    assert folder_sum.folders[0].hash_ == "dda8c1a8c4f4bff52bed8d2a03b1c9ca"
+    assert folder_sum.folders[1].hash_ == "f89f03d1da9d97e1083cef76d1c658d7"
 
     # The new root hash in this instance is just a hash of a single hash
     # which we can test here.
     digest = hashlib.md5()
     digest.update(folder_sum.folders[1].hash_.encode())
-    assert digest.hexdigest() == "0b246bb9e78ea53ab83ea448f02718d1"
+    assert digest.hexdigest() == "dda8c1a8c4f4bff52bed8d2a03b1c9ca"
 
     assert folder_sum.folders[0].path.name == "merkle_collection_root"
-    assert folder_sum.folders[0].sort_order == 0
     assert folder_sum.folders[0].is_root is True
 
     if is_windows:
@@ -225,7 +222,6 @@ def test_artificial_root_node(tmp_path, droid_report, is_windows):
         assert folder_sum.folders[0].depth == 1
 
     assert folder_sum.folders[0].path.name == "merkle_collection_root"
-    assert folder_sum.folders[0].sort_order == 0
     assert folder_sum.folders[0].is_root is True
 
     if is_windows:
@@ -346,12 +342,11 @@ def test_no_root_node(tmp_path, droid_report, is_windows):
     # A cool property of this which we can see here, is that even with
     # the originally named root missing, the hash still evaluates to
     # the same as the original when he hash is there.
-    assert folder_sum.folders[0].hash_ == "38f27e0641507c124daabe21c08dc4a1"
+    assert folder_sum.folders[0].hash_ == "f89f03d1da9d97e1083cef76d1c658d7"
 
     # Some of the introduced properties of the artificial root node are
     # tested below.
     assert folder_sum.folders[0].path.name == "merkle_collection_root"
-    assert folder_sum.folders[0].sort_order == 0
     assert folder_sum.folders[0].is_root is True
 
     if is_windows:
@@ -379,7 +374,7 @@ def test_add_file(tmp_path):
     folder_sum = SumFolders()
     folder_sum.sum_folders(str(droid_csv))
 
-    assert folder_sum.folders[0].hash_ == "38f27e0641507c124daabe21c08dc4a1"
+    assert folder_sum.folders[0].hash_ == "f89f03d1da9d97e1083cef76d1c658d7"
 
     file_7 = "c5a1973a70e08bf1eee13b8090f790ad"
     file_8 = "fdffe4dd2d39c7d9986dbf5c6ec5ad39"  # file that we're adding.
@@ -418,11 +413,11 @@ def test_add_file(tmp_path):
 
     all_multi = [multi[0]["containing_dirs"], multi[1]["containing_dirs"]]
 
-    res1 = ["38f27e0641507c124daabe21c08dc4a1"]
+    res1 = ["f89f03d1da9d97e1083cef76d1c658d7"]
     res2 = [
         "db9d848b4f83ff3cb3faa4df0a59e3e1",
         "2a60541cede91a36e9dc5bab7a97dd6e",
-        "38f27e0641507c124daabe21c08dc4a1",
+        "f89f03d1da9d97e1083cef76d1c658d7",
     ]
 
     assert res1 in all_multi
@@ -450,7 +445,7 @@ def test_add_file(tmp_path):
     folder_sum = SumFolders()
     folder_sum.sum_folders(str(droid_csv))
 
-    assert folder_sum.folders[0].hash_ == "cec9de95a2236712648c13c61a88604e"
+    assert folder_sum.folders[0].hash_ == "12a87d44e75faa61cb0c2ae49b0f8d02"
 
     assert file_7 in [file.hash_ for file in folder_sum.files]
     assert file_8 in [file.hash_ for file in folder_sum.files]
@@ -465,7 +460,7 @@ def test_add_file(tmp_path):
     assert res["query"]["type"] == "Directory"
     assert len(res["query"]["results"]) == 1
     contained_in = res["query"]["results"][0]["containing_dirs"]
-    assert contained_in == ["cec9de95a2236712648c13c61a88604e"]
+    assert contained_in == ["12a87d44e75faa61cb0c2ae49b0f8d02"]
 
     res = folder_sum.verify_hash(folder_sum_2, folders, files).as_dict()
     assert res["query"]["found"] is True
@@ -474,12 +469,12 @@ def test_add_file(tmp_path):
     contained_in = res["query"]["results"][0]["containing_dirs"]
     assert contained_in == [
         "b97e7f327ac133269f4ada94ff7a1ef8",
-        "cec9de95a2236712648c13c61a88604e",
+        "12a87d44e75faa61cb0c2ae49b0f8d02",
     ]
 
     all_new_hashes = [folder.hash_ for folder in folders]
     expected_hashes = [
-        "cec9de95a2236712648c13c61a88604e",  # modified by file addition
+        "12a87d44e75faa61cb0c2ae49b0f8d02",  # modified by file addition
         "b40a1fc415f761feeeae17d186e9f646",  # same as first run.
         "ec01eb83265578c6a1ce893964bd64c7",  # same as first run.
         "1ccb49edc4e873f1a8affd4bad5e9b90",  # same as first run.
@@ -577,6 +572,23 @@ def test_reference_no_empties(tmp_path, droid_report):
           📄 file_0009 7c1f9f9a4d0ce9a72ee63f37a1b7f694
           📄 file_0010 aececec0bc3f515039aec9e60c413cd3
 
+    NB. Root is calculated:
+
+        list(folder hashes, file hashes):
+
+    e.g. (8d175d313bf786d74ad5a27a025719d2)
+
+        _ = [
+            "1ccb49edc4e873f1a8affd4bad5e9b90",
+            "272d45767d534335163f220c1d40e559",
+            "2a60541cede91a36e9dc5bab7a97dd6e",
+            "d7150a51f676408dc9120d2d1ded1cd6",
+            "d818d29b75f89a9b5d8d1c5a4c70dbbb",
+            "14118ff9ad0344decb37960809b2f17a",
+            "8cfda2609b880a553759cd6200823f3b",
+            "a4501ee1a5c711ea9db78a800a24e830",
+        ]
+
     """
     dir_ = tmp_path
     droid_csv = dir_ / "droid_💜_test.csv"
@@ -585,7 +597,7 @@ def test_reference_no_empties(tmp_path, droid_report):
     folder_sum = SumFolders()
     folder_sum.sum_folders(str(droid_csv))
 
-    assert folder_sum.folders[0].hash_ == "d31d760c55a6971e8fa4a9f7c717d324"
+    assert folder_sum.folders[0].hash_ == "8d175d313bf786d74ad5a27a025719d2"
 
 
 def calculate(digests):
@@ -828,7 +840,7 @@ def test_duplicate_pathways(tmp_path, droid_report):
     folder_sum = SumFolders()
     folder_sum.sum_folders(str(droid_csv))
 
-    assert folder_sum.folders[0].hash_ == "efa3947f05c0b346f9b65f494681c4e0"
+    assert folder_sum.folders[0].hash_ == "a7299059839617698029ffa569218bfe"
 
     folders = folder_sum.folders
     files = folder_sum.files
@@ -841,15 +853,17 @@ def test_duplicate_pathways(tmp_path, droid_report):
     assert len(res["query"]["results"]) == 3
     contained_in = res["query"]["results"]
 
-    expected_1 = ["efa3947f05c0b346f9b65f494681c4e0"]
+    # Three levels of folder are represented in different expected
+    # result sets.
+    expected_1 = ["a7299059839617698029ffa569218bfe"]
     expected_2 = [
-        "f9048be615895cb48bcf41eb93170c86",
-        "efa3947f05c0b346f9b65f494681c4e0",
+        "d444de66c51b3b2098b90c7e56ca2f79",
+        "a7299059839617698029ffa569218bfe",
     ]
     expected_3 = [
         "5bc1453c8e40a69d32af6c1265095a2d",
-        "f9048be615895cb48bcf41eb93170c86",
-        "efa3947f05c0b346f9b65f494681c4e0",
+        "d444de66c51b3b2098b90c7e56ca2f79",
+        "a7299059839617698029ffa569218bfe",
     ]
 
     expected = [
@@ -866,27 +880,3 @@ def test_duplicate_pathways(tmp_path, droid_report):
     res = folder_sum.verify_hash(match, folders, files).as_dict()
     assert res["query"]["found"] is True
     assert res["query"]["type"] == "File"
-
-    assert len(res["query"]["results"]) == 3
-    contained_in = res["query"]["results"]
-
-    expected_1 = [
-        "5bc1453c8e40a69d32af6c1265095a2d",
-        "f9048be615895cb48bcf41eb93170c86",
-        "efa3947f05c0b346f9b65f494681c4e0",
-    ]
-    expected_2 = [
-        "f9048be615895cb48bcf41eb93170c86",
-        "efa3947f05c0b346f9b65f494681c4e0",
-    ]
-    expected_3 = ["efa3947f05c0b346f9b65f494681c4e0"]
-
-    expected = [
-        expected_1,
-        expected_2,
-        expected_3,
-    ]
-
-    for container in contained_in:
-        result = container["containing_dirs"]
-        assert result in expected

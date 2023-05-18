@@ -20,9 +20,6 @@ class Folder:
     hash_of_files: str = None
     hash_: str = None
 
-    # Order for sorting directories across the tree.
-    sort_order: int = None
-
     # Non-functional, tree-view helper.
     displayed: bool = False
 
@@ -53,14 +50,15 @@ class Folder:
 
     @staticmethod
     def _sort_directories(folders):
-        """Sort directories by their `sort_order` attribute in reverse
-        order.
+        """Sort directories by their hash values providing they have
+        been calculated.
 
-        While reverse sort-order, to this author, better mimics a
-        virtual vertical view of the tree, this could be the opposite
-        of reverse order too. (I believe.)
+        NB. Hashes are a natural value to sort here. Previously a
+        mechanic existed to generate a sort order, but this makes the
+        heuristic less portable. Sorting by hash values (once
+        calculated) makes this utility truly content based.
         """
-        return _sort_obj_list(folders, "sort_order", True)
+        return _sort_obj_list(folders, "hash_", False)
 
     def hash_folders(self, hash_func) -> str:
         """Generate a single hash for folders."""

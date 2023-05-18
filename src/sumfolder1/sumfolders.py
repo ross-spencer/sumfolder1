@@ -4,7 +4,6 @@ what we discover.
 
 import logging
 import os
-from operator import itemgetter
 from pathlib import PureWindowsPath
 from typing import Final, Union
 
@@ -105,7 +104,6 @@ class SumFolders:
         root.depth = min_depth - 1
         root.is_root = True
         root.path = PureWindowsPath("/merkle_collection_root")
-        root.sort_order = 0
         return root
 
     def generate_lists(
@@ -119,12 +117,7 @@ class SumFolders:
         min_depth = 1000
         override_root = False
 
-        # Paths need to be sorted to be consistent across DROID and
-        # Siegfried. Both output their results slightly differently
-        # from one another.
-        sorted_paths = sorted(droid_list, key=itemgetter("FILE_PATH"))
-
-        for idx, row in enumerate(sorted_paths, 1):
+        for idx, row in enumerate(droid_list, 1):
             path = PureWindowsPath(row["FILE_PATH"])
             type_ = row["TYPE"]
             hash_ = row[csv_hash]
@@ -149,10 +142,6 @@ class SumFolders:
                 folder.is_root = root
                 folder.depth = len(path.parts)
                 min_depth = min(folder.depth, min_depth)
-                # Add sort order...
-                folder.sort_order = idx
-                if root:
-                    folder.sort_order = 0
                 folders.append(folder)
             elif type_ in ("File", "Container"):
                 file = File()
@@ -419,12 +408,15 @@ class SumFolders:
                 folder_depths.append(folder.depth)
             require = min(folder_depths)
             logging.info("Rn+1 depth: %s (out of: %s)", require, folder_depths)
-            # Sort the folders for eventual hashing using sort_order.
-            folders = _sort_obj_list(folders, "sort_order", True)
             # Root node hashes minus 1 (H1).
             rn_m1_hashes = [
                 folder.hash_ for folder in folders if folder.depth == require
             ]
+            # Sort checksums alphabetically so that they are consistently
+            # added together, i.e. this ensures that they are added by content
+            # and no additional data needs adding to the objects, e.g. such
+            # as sort order in a previous version of this code.
+            rn_m1_hashes.sort()
             # Active-tree (H2).
             active_tree_folders = self.get_active_tree(match, folders)
             active_tree_hashes = [folder.hash_ for folder in active_tree_folders]
@@ -466,7 +458,9 @@ class SumFolders:
             for hashes in all_hashes:
                 final_compute.update(hashes.encode())
             final_computed = final_compute.hexdigest()
-            assert final_computed == self.root_folder_hash
+            assert (
+                final_computed == self.root_folder_hash
+            ), f"final_computed: ({final_computed}) doesn't equal expected: ({self.root_folder_hash})"
             assert self.root_folder_hash in active_tree_hashes
             try:
                 active_tree_hashes.remove(search_hash)

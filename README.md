@@ -7,34 +7,35 @@
 </p>
 
 sumfolder1 is a utility for use within the archival and digital preservation
-community to generate checksums for file directories, and to generate
+community to generate checksums for file system directories, and to generate
 an overall "collection" checksum for a given set of files.
 
-- [Why?](#why-)
+* [Why?](#why)
   * [Archival questions](#archival-questions)
   * [Structural questions](#structural-questions)
   * [Forensics questions](#forensics-questions)
-- [How?](#how-)
+* [How?](#how)
   * [Reference set](#reference-set)
   * [Reference implementation](#reference-implementation)
   * [Merkle trees](#merkle-trees)
   * [Terminology](#terminology)
   * [New folder attributes](#new-folder-attributes)
   * [Sensitivity](#sensitivity)
-- [DROID](#droid)
+* [DROID](#droid)
   * [DROID in Siegfried](#droid-in-siegfried)
   * [DROID as an inspiration](#droid-as-an-inspiration)
-- [Installation](#installation)
-- [Usage](#usage)
+  * [Writing about sumfolder1](#writing-about-sumfolder1)
+* [Installation](#installation)
+* [Usage](#usage)
   * [Demo output](#demo-output)
   * [Use with a DROID csv](#use-with-a-droid-csv)
   * [Outputting the reference CSV](#outputting-the-reference-csv)
-- [License](#license)
+* [License](#license)
 
 ## Why?
 
-Conventionally, checksums exist for files, they do not exist for directories. They have
-no payload that can be summed together to calculate a digest/checksum.
+Conventionally, checksums exist for files, they do not exist for directories.
+They have no payload that can be summed together to calculate a digest/checksum.
 
 If it were possible to create checksums for folders or a global checksum for a
 collection of objects, it would become possible to ask the following:
@@ -87,7 +88,7 @@ and a collection checksum: `52b94608dc70813aa88dae01176dc73b`.
 The reference set then looks as follows:
 
 ```text
-📁 collection 52b94608dc70813aa88dae01176dc73b
+📁 collection 93778c524035d5d3e429a2fe43b7700a
    📄 file_0001 14118ff9ad0344decb37960809b2f17a
    📄 file_0000 8cfda2609b880a553759cd6200823f3b
    📄 file_0002 a4501ee1a5c711ea9db78a800a24e830
@@ -111,27 +112,24 @@ The reference set then looks as follows:
          📄 file_0010 aececec0bc3f515039aec9e60c413cd3
    📁 sub_dir_6 74be16979710d4c4e7c6647856088456
       📄 file_empty d41d8cd98f00b204e9800998ecf8427e
+
 ```
 
 ### Reference implementation
 
-The reference implementation for sumfolder1 does the followsing:
-
-1. Order the set alphabetically by file path.
-1. Give each folder in order an increasing value: sort order.
-1. Order the set in reverse sort order.
+The reference implementation for sumfolder1 does the following:
 
 From the lowest sub-directory in the tree:
 
-1. Check for sub-directories and add these to a hash digest (in reverse sort
-order).
-1. For files in the directory add these to a hash digest in alphabetical order
+1. Check for sub-directories and add the checksums for these to a hash digest in
+alphabetical order by checksum.
+1. For files in the directory add these to the hash digest in alphabetical order
 by checksum.
 1. Create a digest for the list of checksums.
 
 Repeat, processing each folder backwards up to the top level.
 
-> NB. If the folder is completely empty it is assigned a constant value
+> NB. If a folder is completely empty it is assigned a constant value
 chosen in the code: `2600_EMPTY_DIRECTORY`. This evaluates to an MD5 value of
 `1ccb49edc4e873f1a8affd4bad5e9b90`.
 
@@ -151,9 +149,10 @@ And a Python tutorial I found useful in starting this work:
 The technique required for a directory tree is a little more convoluted than
 that of a Merkle tree which uses binary nodes and evaluates checksums from left
 to right. I believe the implementation used for sumfolder1 is more closely
-aligned to that of a "Radix Tree" or "Patricia Tree", however, this is to be explored more.
+aligned to that of a "Radix Tree" or "Patricia Tree", however, this is to be
+explored more.
 
-> NB. A merkle tree is partially used for performance, however, sumfolder1 does
+> NB. A merkle tree can be used in its context for performance; sumfolder1 does
 not yet have a performance use-case.
 
 ### Terminology
@@ -175,26 +174,27 @@ Folder objects need to be given additional attributes to enable the algorithm
 to work.
 
 * Folder-depth, so directories can be grouped and distinguished from
-one-another.
-* Sort_order, so they can be consistently recalculated.
+one-another by level in the hierarchy.
 * Hash, the goal of this tool is to enable a hash to be calculated for
 an entire collection.
 
 ### Sensitivity
 
-The code is sensitive to small changes. If checksums are calculated in different orders the results will be different. To elaborate on the algorithm above, this
-is controlled by:
+I am trying to make this code as portable as possible, i.e. while it works with
+DROID-style reports today, it might also work with other checksum-based outputs
+tomorrow. Additionally, to be able to compare folder structures, this utility
+may also work with DROID-style reports later on in a transfer workflow; at which
+point, folders and files may have been renamed, but their content remains
+consistent.
 
-1. Creating a sort order for directories. This needs only be contiguous
-from the root node (Rn): so Rn == 0, folder1 = 1, folder2 = 3, and so
-on. Sub directory checksums are then calculated by ordering the folders
-in the sub-directory in reverse sort order, and then adding the hashes
-together.
+To calculate a single folder checksum we currently do the following:
 
-2. Files already have checksums. These checksums need to be ordered
-alphanumerically in order, 0, 1, 2, 3, a, b, c, etc.
+* If there are folders in the directory, order their hashes alphabetically
+and add to a list.
+* File checksums are then ordered alphabetically and added to the end of the
+list.
+* The checksums are then summed together to create a new folder-level checksum.
 
-Then, no-matter the shape of the file-format identification report used, the tool should work to enable verification of the files in a given set.
 ## DROID
 
 sumfolder1 uses the DROID format identification report to generate folder level
@@ -216,7 +216,8 @@ sf --hash=md5 --droid <collection_folder>
 ### DROID as an inspiration
 
 File format reports provide a means of statically analyzing collections of
-digital objects. A DROID report satisfies the pre-conditions required to create reliable folder- and collection-level checksums for digital collections:
+digital objects. A DROID report satisfies the pre-conditions required to create
+reliable folder- and collection-level checksums for digital collections:
 
 * A collection is static, i.e. unlikely to change.
 * Digital objects within the collection have checksums.
@@ -228,6 +229,14 @@ More information about the different uses for a file-format identification
 report can be found in my paper in the Code4Lib journal.
 
 * [Fractal in detail: What information is in a file format identification report?][code4lib-1]
+
+### Writing about sumfolder1
+
+I wrote a blog describing the utility on the OPF website.
+
+* [What is the checksum of a directory?][opf-1]
+
+[opf-1]: https://openpreservation.org/blogs/what-is-the-checksum-of-a-directory/?q=1
 
 ## Installation
 
@@ -244,7 +253,8 @@ sumfolder1 has the following usage instructions:
 ```text
 usage: sumfolder1.py [-h] [--csv CSV] [--demo] [--ref] [-v]
 
-Calculate checksums for folders in a collection of objects using a DROID format identification report
+Calculate checksums for folders in a collection of objects using a DROID format
+identification report
 
 options:
   -h, --help          show this help message and exit
@@ -278,7 +288,8 @@ python sumfolder1 --csv <droid_csv_file>
 
 ### Outputting the reference CSV
 
-A reference CSV can be output to `stdout`. Ideally it is piped to some other  file using a command such as follows:
+A reference CSV can be output to `stdout`. Ideally it is piped to some other
+file using a command such as follows:
 
 ```bash
 python sumfolder1 --ref > <output_file>
