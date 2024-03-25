@@ -1,3 +1,4 @@
+<!-- markdownlint-disable -->
 <p align="center">
   <img
    width="786"
@@ -5,10 +6,13 @@
    alt="Logo for sumfolder1"
    src="https://raw.githubusercontent.com/ross-spencer/sumfolder1/main/logo/sumfolder1.png">
 </p>
+<!-- markdownlint-enable -->
 
 sumfolder1 is a utility for use within the archival and digital preservation
 community to generate checksums for file system directories, and to generate
 an overall "collection" checksum for a given set of files.
+
+<!-- TOC Generator: https://luciopaiva.com/markdown-toc/ -->
 
 * [Why?](#why)
   * [Archival questions](#archival-questions)
@@ -30,6 +34,7 @@ an overall "collection" checksum for a given set of files.
   * [Demo output](#demo-output)
   * [Use with a DROID csv](#use-with-a-droid-csv)
   * [Outputting the reference CSV](#outputting-the-reference-csv)
+* [Previous work](#previous-work)
 * [License](#license)
 
 ## Why?
@@ -78,6 +83,7 @@ We can see this illustrated for a small collection as follows:
 
 If we follow this approach through an entire directory structure we can create
 checksums for all sub-directories and for the collection as a whole.
+
 ### Reference set
 
 A reference set is provided with this repository: [reference set](reference/collection.7z).
@@ -295,6 +301,15 @@ file using a command such as follows:
 python sumfolder1 --ref > <output_file>
 ```
 
+## Previous work
+
+Previous work in this area.
+
+* Check out [direct-dedupe-1] from Stefana Breitwieser which I was recently made
+aware of via the BitCurator Forum 2024 and provides a shell script to calculate
+checksums for sub-directories providing a very pragmatic way to help users
+dedupe at the folder level.
+
 ## License
 
 This work is license using: GNU GENERAL PUBLIC LICENSE Version 3.
@@ -303,3 +318,4 @@ This work is license using: GNU GENERAL PUBLIC LICENSE Version 3.
 [code4lib-1]: https://www.nationalarchives.gov.uk/information-management/manage-information/preserving-digital-records/droid/
 [merkle-1]: https://www.youtube.com/watch?v=qHMLy5JjbjQ
 [merkle-2]: https://medium.com/building-blocks-on-the-chain/learn-merkle-trees-by-programming-your-own-4f0438d40063
+[direct-dedupe-1]: https://github.com/stefanabreitwieser/direct-dedupe/
