@@ -1,0 +1,5 @@
+# Configurtion file for Markdown lint. Add exceptions here.
+default: true
+
+# heading levels.
+MD002: false

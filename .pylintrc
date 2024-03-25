@@ -17,6 +17,7 @@ ignore-patterns=
     ^(.+).toml$,
     ^(.+).txt$,
 	^(.+).service$,
+    ^(.+).yaml$,
 
 ignore-paths=
 	requirements/*,
@@ -38,6 +39,3 @@ disable =
     R0915,  # Too many statements (71/50) (too-many-statements). TODO: Immediate priority.
     R0903,  # Too few public methods (1/2) (too-few-public-methods).
     R0801,  # Similar lines in multiple files. We're seeing this in the unit tests.
-
-
-
